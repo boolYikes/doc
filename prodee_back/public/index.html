@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket Test</title>
+    <style>
+        #chat-log {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        #message-input {
+            width: 80%;
+        }
+        #send-button {
+            width: 18%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="chat-log"></div>
+        <input type="text" id="message-input" placeholder="Type your message..."/>
+        <button id="send-button">Send</button>
+    </div>
+    <script>
+        const userId = prompt("Enter ID:")
+        if (!userId) {
+            alert("Enter valid iD!")
+            window.location.reload()
+        } else {
+            console.log(`Your id: ${userId}`)
+            console.log(window.location.host)
+            const ws = new WebSocket(`ws://${window.location.host}`)
+            ws.onopen = () => {
+                console.log("Conn established.")
+                ws.send(JSON.stringify({ type: 'login', id: userId }))
+            }
+    
+            ws.onmessage = (event) => {
+                console.log("Message received from server.")
+                const data = JSON.parse(event.data)
+                const chatLog = document.getElementById('chat-log')
+                let newMessage = ""
+    
+                if (data.type === 'system') {
+                    newMessage = `<p><em>${data.message}</em></p>`
+                } else if (data.type === 'message') {
+                    newMessage = `<p><strong>${data.id}:</strong> ${data.message}</p>`
+                }
+    
+                chatLog.innerHTML += newMessage
+                chatLog.scrollTop = chatLog.scrollHeight
+            }
+    
+            ws.onerror = (error) => {
+                console.error("WebSocket error: ", error)
+            }
+    
+            ws.onclose = () => {
+                console.log("WebSocket conn closed.")
+            }
+
+            const messageInput = document.getElementById('message-input')
+            const sendButton = document.getElementById('send-button')
+            const chatLog = document.getElementById('chat-log')
+
+            const sendMessage = () => {
+                const message = messageInput.value.trim()
+                if (message) {
+                    console.log(`Sending message : ${message}`)
+                    ws.send(JSON.stringify({ type: 'message', message }))
+                    messageInput.value = ''
+                    messageInput.focus()
+                }
+            }
+            sendButton.addEventListener('click', sendMessage)
+            
+            messageInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault()
+                    sendMessage()
+                }
+            })
+        }
+    </script>
+</body>
+</html>
