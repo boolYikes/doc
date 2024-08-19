@@ -2,8 +2,8 @@
 - [ ] Refactor frontend to a separate project
 - [ ] Conn seems to close automatically after some time. Fix it.
 - [ ] Also the router bandwidth seems to suffer. Debug traffic load.
-- [x] Domain name
-- [x] Add SSL certificate for external test
+- [x] ~~Domain name~~
+- [x] ~~Add SSL certificate for external test~~
 - [ ] Add build - deploy pipelineharryasd
 - [ ] Add unit test
 - [ ] Add integration test
