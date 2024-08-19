@@ -1,16 +1,17 @@
 const express = require('express')
-const https = require('https')
+// const https = require('https')
+const http = require('http')
 const WebSocket = require('ws')
 const path = require('path')
-const fs = require('fs')
+// const fs = require('fs')
 
 const app = express()
-const options = {
-    key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
-}
+// const options = {
+//     key: fs.readFileSync('/etc/letsencrypt/live/dees.kr/fullchain.pem'),
+//     cert: fs.readFileSync('/etc/letsencrypt/live/dees.kr/privkey.pem')
+// }
 
-const server = https.createServer(options, app)
+const server = http.createServer(app)
 const wss = new WebSocket.Server({ server })
 
 let clients = {}
